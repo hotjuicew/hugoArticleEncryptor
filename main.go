@@ -31,6 +31,7 @@ func main() {
 
 		encryptedContents[file] = encrypted
 		//fmt.Println("加密后的文本", encryptedContents[file])
+		//	todo
 	}
 	for file, encrypted := range encryptedContents {
 		//fmt.Printf("%s: %s\n", file, encrypted)

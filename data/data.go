@@ -11,7 +11,6 @@ import (
 
 func getMetadata(filename string) (map[string]interface{}, string, error) {
 	content, err := ioutil.ReadFile(filename)
-	fmt.Println("content:")
 	if err != nil {
 		return nil, "", err
 	}
@@ -20,13 +19,23 @@ func getMetadata(filename string) (map[string]interface{}, string, error) {
 	splitContent := strings.SplitN(string(content), "---", 3)
 
 	// 解析FrontMatter中的YAML信息
-	var metadata map[string]interface{}
+	metadata := make(map[string]interface{})
 	if err = yaml.Unmarshal([]byte(splitContent[1]), &metadata); err != nil {
 		return nil, "", err
 	}
-	return metadata, string(content), nil
+
+	// 校验metadata是否同时含有protected和password
+	_, ok1 := metadata["protected"]
+	_, ok2 := metadata["password"]
+	if !ok1 || !ok2 {
+		return nil, "", nil
+	}
+
+	fmt.Println("splitContent", splitContent[2])
+	return metadata, splitContent[2], nil
 }
 
+// GetPasswords 获取所有密码
 func GetPasswords(contentDir string) (map[string]string, map[string]string, error) {
 	passwords := make(map[string]string)
 	contents := make(map[string]string)
@@ -56,5 +65,6 @@ func GetPasswords(contentDir string) (map[string]string, map[string]string, erro
 		return nil, nil, err
 	}
 
+	fmt.Println("passwords", passwords)
 	return passwords, contents, nil
 }
