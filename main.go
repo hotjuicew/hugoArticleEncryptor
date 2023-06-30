@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/hotjuicew/hugoArticleEncryptor/html"
 	"log"
+	"regexp"
 
 	"github.com/hotjuicew/hugoArticleEncryptor/crypto"
 	"github.com/hotjuicew/hugoArticleEncryptor/data"
@@ -32,17 +34,25 @@ func main() {
 		encryptedContents[file] = encrypted
 		//fmt.Println("加密后的文本", encryptedContents[file])
 		//	todo
-	}
-	for file, encrypted := range encryptedContents {
-		//fmt.Printf("%s: %s\n", file, encrypted)
-		plaintext, err := crypto.AESDecrypt(encrypted, encryptedPasswords[file])
-		if err != nil {
-			log.Fatal(err)
-		}
-		//fmt.Println("encryptedPasswords[file]2", encryptedPasswords[file])
+		fmt.Println("file", file) // content\111.md
 
-		fmt.Printf("解密后的文本%s:\n%s\n\n", file, plaintext)
+		r, _ := regexp.Compile("content\\\\|\\.md$")
+		fileName := r.ReplaceAllString(file, "")
 
+		html.AddCustomAttribute(fileName, encrypted)
 	}
+
+	////解密
+	//for file, encrypted := range encryptedContents {
+	//	//fmt.Printf("%s: %s\n", file, encrypted)
+	//	plaintext, err := crypto.AESDecrypt(encrypted, encryptedPasswords[file])
+	//	if err != nil {
+	//		log.Fatal(err)
+	//	}
+	//	//fmt.Println("encryptedPasswords[file]2", encryptedPasswords[file])
+	//
+	//	fmt.Printf("解密后的文本%s:\n%s\n\n", file, plaintext)
+	//
+	//}
 
 }
