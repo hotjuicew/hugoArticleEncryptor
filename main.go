@@ -32,7 +32,7 @@ func main() {
 		fmt.Println("encryptedPasswords[file]1：", encryptedPasswords[file])
 
 		encryptedContents[file] = encrypted
-		//fmt.Println("加密后的文本", encryptedContents[file])
+		fmt.Println("加密后的文本", encryptedContents[file])
 		//	todo
 		fmt.Println("file", file) // content\111.md
 

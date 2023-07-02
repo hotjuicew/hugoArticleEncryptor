@@ -41,11 +41,19 @@ func AddCustomAttribute(folderName string, encryptedText string) {
 				selection.SetAttr("ciphertext", encryptedText)
 			})
 
+			// 向HTML文件的<body>标签添加一个引用外部JavaScript文件的<script>标签
+			doc.Find("body").AppendHtml(`<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>`)
+
+			// 添加一个引用'/static/js/decrypt.js'的<script>标签
+			doc.Find("body").AppendHtml(`<script src="/static/js/decrypt.js"></script>`)
+
 			// 获取修改后的HTML内容
 			updatedHTML, err := doc.Html()
 			if err != nil {
 				return err
 			}
+
+			//todo 向HTML文件的<body>标签添加一个引用外部JavaScript文件的<script>标签 src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js",并添加一个引用'/static/js/decrypt.js'的<script>标签
 
 			// 将修改后的HTML内容写入文件
 			err = os.WriteFile(path, []byte(updatedHTML), 0644)
