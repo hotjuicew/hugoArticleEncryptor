@@ -1,5 +1,13 @@
 
-async function aesDecrypt(ciphertext, password,nonse) {
+async function AESDecrypt(cipher, password) {
+    console.log("cipher", cipher);
+
+    let parts = cipher.split("|");
+
+    let ciphertext = parts[1];
+    let nonce = parts[0];
+
+    console.log("ciphertext", ciphertext);
     const ciphertextBuffer = hexToBytes(ciphertext)
     // 计算密码的 SHA-256作为密钥
     // 将密码转换为 Uint8Array
@@ -13,29 +21,29 @@ async function aesDecrypt(ciphertext, password,nonse) {
     var hash = Array.from(new Uint8Array(hashBuffer));
 
     const hashKey = new Uint8Array(hash);
-    console.log("hashKey",hashKey)
+    console.log("hashKey", hashKey)
     const key = await window.crypto.subtle.importKey(
         'raw',
         hashKey, {
-            name: 'AES-GCM',
-        },
+        name: 'AES-GCM',
+    },
         false,
         ['decrypt']
     )
-    console.log("key",key)
-    console.log('nonse',nonse)
-    let iv=hexToBytes(nonse)
-    console.log("iv",iv)
+    console.log("key", key)
+    console.log('nonce', nonce)
+    let iv = hexToBytes(nonce)
+    console.log("iv", iv)
     const decrypted = await window.crypto.subtle.decrypt({
-            name: 'AES-GCM',
-            iv: iv,
-            tagLength: 128,
-        },
+        name: 'AES-GCM',
+        iv: iv,
+        tagLength: 128,
+    },
         key,
         new Uint8Array(ciphertextBuffer)
     )
-    console.log("new Uint8Array(ciphertextBuffer)",new Uint8Array(ciphertextBuffer))
-    console.log("decrypted",decrypted)
+    console.log("new Uint8Array(ciphertextBuffer)", new Uint8Array(ciphertextBuffer))
+    console.log("decrypted", decrypted)
     return new TextDecoder('utf-8').decode(new Uint8Array(decrypted))
 }
 function hexToBytes(hexString) {
@@ -52,14 +60,61 @@ function hexToBytes(hexString) {
 
     return bytes;
 }
-console.log('js导入成功')
+let title = document.title
+if (localStorage.getItem(title)!== null) {
+    decryption(localStorage.getItem(title))
+}
+const submitButton = document.getElementById('submit');
+console.log("submitButton", submitButton);
+submitButton.addEventListener('click', function (event) {
+    event.preventDefault(); // Blocking the default form submission behavior
+    checkPassword();
+});
 
-// 示例用法
-const ciphertext ="18eb2d87f88705e1f2252e6a426dc96ca6f6b4f8bb1ee9b9c32fab63b105e51665266fe40720daa0bad1cf49a8bb64cdd9471fddfa1a63a6cd4c511c9fb8ec42dca02072a58d8908adfed346564208ed3c2fb956642aeb0df8bde8f923885c49ee5eb31eaa3ada304de25d377431c4da7437e2d20e07e1bd2969951f9675d411c48965"
-const nonse='f5bb872a08ef929e6744d117'
-const password = "111111"
+function checkPassword() {
+    const passwordInput = document.querySelector('input[name="password"]');
+    const password = passwordInput.value;
+
+    console.log('checkPassword()');
 
 
-const plaintext=aesDecrypt(ciphertext,password,nonse)
+    decryption(password)
+}
+function hidePasswordFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('password', '******');
+    const newURL = window.location.pathname + '?' + urlParams.toString();
+    window.history.replaceState({}, '', newURL);
+}
+function decryption(password) {
+    // 获取 ciphertext 属性的值
+    let secretElement = document.getElementById('secret');
+    let ciphertext = secretElement.innerText;
+    async function decryptAndSetContent() {
+        try {
+            let decrypted = await AESDecrypt(ciphertext, password);
+            console.log("明文",decrypted)
+            return decrypted
 
-console.log("plaintext:",plaintext)
+        } catch (error) {
+            alert("Incorrect password. Please try again.");
+        }
+    }
+
+    decryptAndSetContent().then(decrypted => {
+        if (decrypted.includes("</div>")){
+            document.getElementById("verification").style.display = "none";
+            // 将 ciphertext 的值放入 verification后面 中
+            // 查找id为verification的元素
+            var verificationElement = document.getElementById('verification');
+            // 在id为verification的元素后面插入HTML代码
+            verificationElement.insertAdjacentHTML('afterend', decrypted);
+            //将密码储存至localStorage
+
+            if (localStorage.getItem(title) !== null)localStorage.setItem(title, password);
+        }else {
+            alert("Incorrect password. Please try again.");
+        }
+    });
+    hidePasswordFromURL()
+}

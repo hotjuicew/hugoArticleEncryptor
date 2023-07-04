@@ -2,3 +2,9 @@
 content
 public
 static
+resources
+static
+.hugo_build.lock
+config.toml
+layouts
+themes

@@ -2,17 +2,18 @@ package data
 
 import (
 	"fmt"
+	"github.com/PuerkitoBio/goquery"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-func getMetadata(filename string) (map[string]interface{}, string, error) {
-	content, err := ioutil.ReadFile(filename)
+func getMetadata(filename string) (map[string]interface{}, error) {
+	content, err := os.ReadFile(filename)
 	if err != nil {
-		return nil, "", err
+		return nil, err
 	}
 
 	// 将内容分割成字符串,FrontMatter在最前面
@@ -21,24 +22,58 @@ func getMetadata(filename string) (map[string]interface{}, string, error) {
 	// 解析FrontMatter中的YAML信息
 	metadata := make(map[string]interface{})
 	if err = yaml.Unmarshal([]byte(splitContent[1]), &metadata); err != nil {
-		return nil, "", err
+		return nil, err
 	}
 
 	// 校验metadata是否同时含有protected和password
 	_, ok1 := metadata["protected"]
 	_, ok2 := metadata["password"]
 	if !ok1 || !ok2 {
-		return nil, "", nil
+		return nil, nil
 	}
 
-	fmt.Println("splitContent", splitContent[2])
-	return metadata, splitContent[2], nil
+	return metadata, nil
 }
 
-// GetPasswords 获取所有密码
-func GetPasswords(contentDir string) (map[string]string, map[string]string, error) {
+// GetContent 获取需要加密的html代码并删除
+
+func GetContent(html string) (string, error) {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+	if err != nil {
+		return "", err
+	}
+	encryptedDiv := doc.Find("#encrypted")
+	verificationDiv := encryptedDiv.Find("#verification")
+	verificationDiv.Remove()
+	others := encryptedDiv.Children()
+	othersHTML, _ := goquery.OuterHtml(others)
+
+	return strings.TrimSpace(othersHTML), nil
+}
+func UpdateHTML(html string) (string, error) {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+	if err != nil {
+		return "", err
+	}
+	// 去除meta标签
+	doc.Find("meta").Remove()
+	encryptedDiv := doc.Find("#encrypted")
+	verificationDiv := encryptedDiv.Find("#verification")
+	encryptedDiv.Contents().Remove()
+	encryptedDiv.AppendSelection(verificationDiv)
+
+	// 获取最终的HTML内容
+	result, err := doc.Html()
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// GetPasswords 获取所有密码和html内容
+func GetPasswords(contentDir string) (map[string]string, error) {
 	passwords := make(map[string]string)
-	contents := make(map[string]string)
 
 	err := filepath.Walk(contentDir, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
@@ -48,7 +83,8 @@ func GetPasswords(contentDir string) (map[string]string, map[string]string, erro
 			return nil
 		}
 
-		metadata, content, err := getMetadata(path)
+		metadata, err := getMetadata(path)
+		fmt.Println(path)
 		if err != nil {
 			return err
 		}
@@ -56,15 +92,38 @@ func GetPasswords(contentDir string) (map[string]string, map[string]string, erro
 		password, ok := metadata["password"].(string)
 		if ok {
 			passwords[path] = password
-			contents[path] = content
 		}
 		return nil
 	})
 
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	fmt.Println("passwords", passwords)
-	return passwords, contents, nil
+	return passwords, nil
+}
+
+// GetHTML 接收文件名路径，返回要加密的内容
+func GetHTML(contentDir string) string {
+	base := filepath.Base(contentDir)
+	baseWithoutExt := strings.TrimSuffix(base, filepath.Ext(base))
+
+	htmlDir := filepath.Join("public", "post", baseWithoutExt, "index.html")
+	file, err := os.ReadFile(htmlDir)
+	if err != nil {
+		log.Println(err)
+	}
+	content, err := GetContent(string(file))
+	updatedHTML, err := UpdateHTML(string(file))
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = os.WriteFile(htmlDir, []byte(updatedHTML), 0644)
+	if err != nil {
+		log.Println(err)
+
+	}
+	return content
 }
