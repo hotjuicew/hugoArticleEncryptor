@@ -1,9 +1,11 @@
 package data
 
 import (
+	"embed"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"gopkg.in/yaml.v2"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -126,4 +128,26 @@ func GetHTML(contentDir string) string {
 
 	}
 	return content
+}
+func CopyFile(sourcePath, destinationPath string, content embed.FS) error {
+	// 从嵌入的文件中读取内容
+	file, err := content.Open(sourcePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// 创建目标文件并写入内容
+	destinationFile, err := os.Create(destinationPath)
+	if err != nil {
+		return err
+	}
+	defer destinationFile.Close()
+
+	_, err = io.Copy(destinationFile, file)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
