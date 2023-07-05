@@ -109,7 +109,7 @@ func GetHTML(contentDir string) string {
 	base := filepath.Base(contentDir)
 	baseWithoutExt := strings.TrimSuffix(base, filepath.Ext(base))
 
-	htmlDir := filepath.Join("public", "post", baseWithoutExt, "index.html")
+	htmlDir := filepath.Join("public", "posts", baseWithoutExt, "index.html")
 	file, err := os.ReadFile(htmlDir)
 	if err != nil {
 		log.Println(err)
