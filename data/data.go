@@ -106,27 +106,49 @@ func GetPasswords(contentDir string) (map[string]string, error) {
 	return passwords, nil
 }
 
-// GetHTML 接收文件名路径，返回要加密的内容
+// GetHTML receives the file name path and returns the content to be encrypted
 func GetHTML(contentDir string) string {
 	base := filepath.Base(contentDir)
 	baseWithoutExt := strings.TrimSuffix(base, filepath.Ext(base))
 
-	htmlDir := filepath.Join("public", "posts", baseWithoutExt, "index.html")
-	file, err := os.ReadFile(htmlDir)
+	htmlDir1 := filepath.Join("public", "posts", baseWithoutExt, "index.html")
+	htmlDir2 := filepath.Join("public", "post", baseWithoutExt, "index.html")
+
+	// Check if the first possible htmlDir exists
+	_, err := os.Stat(htmlDir1)
+	if err == nil {
+		// htmlDir1 exists
+	} else if os.IsNotExist(err) {
+		// htmlDir1 does not exist, use htmlDir2
+		htmlDir1 = htmlDir2
+	} else {
+		log.Println(err)
+		return ""
+	}
+
+	file, err := os.ReadFile(htmlDir1)
 	if err != nil {
 		log.Println(err)
+		return ""
 	}
+
 	content, err := GetContent(string(file))
+	if err != nil {
+		log.Println(err)
+		return ""
+	}
+
 	updatedHTML, err := UpdateHTML(string(file))
 	if err != nil {
 		log.Println(err)
+		return ""
 	}
 
-	err = os.WriteFile(htmlDir, []byte(updatedHTML), 0644)
+	err = os.WriteFile(htmlDir1, []byte(updatedHTML), 0644)
 	if err != nil {
 		log.Println(err)
-
 	}
+
 	return content
 }
 func CopyFile(sourcePath, destinationPath string, content embed.FS) error {
