@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 
 	"github.com/hotjuicew/hugoArticleEncryptor/crypto"
@@ -13,10 +14,10 @@ import (
 	"github.com/hotjuicew/hugoArticleEncryptor/html"
 )
 
-// go:embed AESDecrypt.js
+//go:embed AESDecrypt.js
 var aesDecryptScript embed.FS
 
-// go:embed secret.html
+//go:embed secret.html
 var secretHtml embed.FS
 
 func main() {
@@ -29,11 +30,11 @@ func main() {
 	themeName := os.Args[1]
 	fmt.Println("Theme Name: ", themeName)
 
-	err := data.CopyFile("AESDecrypt.js", fmt.Sprintf("/themes/%s/static/js/AESDecrypt.js", themeName), aesDecryptScript)
+	err := data.CopyFile("AESDecrypt.js", filepath.Join("themes/", themeName, "/static/js/AESDecrypt.js"), aesDecryptScript)
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = data.CopyFile("secret.html", fmt.Sprintf("/themes/%s/layouts/partials/secret.html", themeName), secretHtml)
+	err = data.CopyFile("secret.html", filepath.Join("themes/", themeName,"/layouts/partials/secret.html", themeName), secretHtml)
 	if err != nil {
 		log.Fatal(err)
 	}
