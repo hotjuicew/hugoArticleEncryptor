@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"unicode"
 )
 
 func getMetadata(filename string) (map[string]interface{}, error) {
@@ -96,9 +97,14 @@ func GetPasswords(contentDir string) (map[string]string, error) {
 func GetHTML(contentDir string) string {
 	base := filepath.Base(contentDir)
 	baseWithoutExt := strings.TrimSuffix(base, filepath.Ext(base))
-
-	htmlDir1 := filepath.Join("public", "posts", baseWithoutExt, "index.html")
-	htmlDir2 := filepath.Join("public", "post", baseWithoutExt, "index.html")
+	baseWithoutExtLower := strings.Map(func(r rune) rune {
+		if unicode.IsUpper(r) {
+			return unicode.ToLower(r)
+		}
+		return r
+	}, baseWithoutExt)
+	htmlDir1 := filepath.Join("public", "posts", baseWithoutExtLower, "index.html")
+	htmlDir2 := filepath.Join("public", "post", baseWithoutExtLower, "index.html")
 
 	// Check if the first possible htmlDir exists
 	_, err := os.Stat(htmlDir1)
@@ -112,6 +118,7 @@ func GetHTML(contentDir string) string {
 		return ""
 	}
 
+	log.Println(htmlDir1)
 	file, err := os.ReadFile(htmlDir1)
 	if err != nil {
 		log.Println(err)
