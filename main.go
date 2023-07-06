@@ -31,7 +31,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = data.CopyFile("secret.html", filepath.Join("themes/", themeName, "/layouts/partials/secret.html", themeName), secretHtml)
+	err = data.CopyFile("secret.html", filepath.Join("themes/", themeName, "/layouts/partials/secret.html"), secretHtml)
 	if err != nil {
 		log.Fatal(err)
 	}
