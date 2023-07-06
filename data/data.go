@@ -17,28 +17,20 @@ func getMetadata(filename string) (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	// 将内容分割成字符串,FrontMatter在最前面
 	splitContent := strings.SplitN(string(content), "---", 3)
-
-	// 解析FrontMatter中的YAML信息
 	metadata := make(map[string]interface{})
 	if err = yaml.Unmarshal([]byte(splitContent[1]), &metadata); err != nil {
 		return nil, err
 	}
-
-	// 校验metadata是否同时含有protected和password
 	_, ok1 := metadata["protected"]
 	_, ok2 := metadata["password"]
 	if !ok1 || !ok2 {
 		return nil, nil
 	}
-
 	return metadata, nil
 }
 
-// GetContent 获取需要加密的html代码并删除
-
+// GetContent Get the html code that needs to be encrypted and delete it
 func GetContent(html string) (string, error) {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 	if err != nil {
@@ -49,7 +41,6 @@ func GetContent(html string) (string, error) {
 	verificationDiv.Remove()
 	others := encryptedDiv.Children()
 	othersHTML, _ := goquery.OuterHtml(others)
-
 	return strings.TrimSpace(othersHTML), nil
 }
 func UpdateHTML(html string) (string, error) {
@@ -57,23 +48,21 @@ func UpdateHTML(html string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	// 去除meta标签
+	// Remove meta tags
 	doc.Find("meta").Remove()
 	encryptedDiv := doc.Find("#encrypted")
 	verificationDiv := encryptedDiv.Find("#verification")
 	encryptedDiv.Contents().Remove()
 	encryptedDiv.AppendSelection(verificationDiv)
-
-	// 获取最终的HTML内容
+	// Get the final HTML content
 	result, err := doc.Html()
 	if err != nil {
 		return "", err
 	}
-
 	return result, nil
 }
 
-// GetPasswords 获取所有密码和html内容
+// GetPasswords Get all passwords and html content
 func GetPasswords(contentDir string) (map[string]string, error) {
 	passwords := make(map[string]string)
 
@@ -97,12 +86,9 @@ func GetPasswords(contentDir string) (map[string]string, error) {
 		}
 		return nil
 	})
-
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println("passwords", passwords)
 	return passwords, nil
 }
 
@@ -152,14 +138,14 @@ func GetHTML(contentDir string) string {
 	return content
 }
 func CopyFile(sourcePath, destinationPath string, content embed.FS) error {
-	// 从嵌入的文件中读取内容
+	// Read content from embedded files
 	file, err := content.Open(sourcePath)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	// 创建目标文件并写入内容
+	// Create the target file and write the contents
 	destinationFile, err := os.Create(destinationPath)
 	if err != nil {
 		return err
