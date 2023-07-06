@@ -1,13 +1,8 @@
 
 async function AESDecrypt(cipher, password) {
-    console.log("cipher", cipher);
-
     let parts = cipher.split("|");
-
     let ciphertext = parts[1];
     let nonce = parts[0];
-
-    console.log("ciphertext", ciphertext);
     const ciphertextBuffer = hexToBytes(ciphertext)
     // 计算密码的 SHA-256作为密钥
     // 将密码转换为 Uint8Array
@@ -21,7 +16,6 @@ async function AESDecrypt(cipher, password) {
     var hash = Array.from(new Uint8Array(hashBuffer));
 
     const hashKey = new Uint8Array(hash);
-    console.log("hashKey", hashKey)
     const key = await window.crypto.subtle.importKey(
         'raw',
         hashKey, {
@@ -30,10 +24,7 @@ async function AESDecrypt(cipher, password) {
         false,
         ['decrypt']
     )
-    console.log("key", key)
-    console.log('nonce', nonce)
     let iv = hexToBytes(nonce)
-    console.log("iv", iv)
     const decrypted = await window.crypto.subtle.decrypt({
         name: 'AES-GCM',
         iv: iv,
@@ -42,8 +33,6 @@ async function AESDecrypt(cipher, password) {
         key,
         new Uint8Array(ciphertextBuffer)
     )
-    console.log("new Uint8Array(ciphertextBuffer)", new Uint8Array(ciphertextBuffer))
-    console.log("decrypted", decrypted)
     return new TextDecoder('utf-8').decode(new Uint8Array(decrypted))
 }
 function hexToBytes(hexString) {
@@ -64,8 +53,7 @@ let title = document.title
 if (localStorage.getItem(title)!== null) {
     decryption(localStorage.getItem(title))
 }
-const submitButton = document.getElementById('submit');
-console.log("submitButton", submitButton);
+const submitButton = document.getElementById('secret-submit');
 submitButton.addEventListener('click', function (event) {
     event.preventDefault(); // Blocking the default form submission behavior
     checkPassword();
@@ -74,17 +62,7 @@ submitButton.addEventListener('click', function (event) {
 function checkPassword() {
     const passwordInput = document.querySelector('input[name="password"]');
     const password = passwordInput.value;
-
-    console.log('checkPassword()');
-
-
     decryption(password)
-}
-function hidePasswordFromURL() {
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('password', '******');
-    const newURL = window.location.pathname + '?' + urlParams.toString();
-    window.history.replaceState({}, '', newURL);
 }
 function decryption(password) {
     // 获取 ciphertext 属性的值
@@ -93,7 +71,6 @@ function decryption(password) {
     async function decryptAndSetContent() {
         try {
             let decrypted = await AESDecrypt(ciphertext, password);
-            console.log("明文",decrypted)
             return decrypted
 
         } catch (error) {
@@ -110,11 +87,10 @@ function decryption(password) {
             // 在id为verification的元素后面插入HTML代码
             verificationElement.insertAdjacentHTML('afterend', decrypted);
             //将密码储存至localStorage
-
-            if (localStorage.getItem(title) !== null)localStorage.setItem(title, password);
+            if (localStorage.getItem(title) === null)localStorage.setItem(title, password);
         }else {
             alert("Incorrect password. Please try again.");
         }
     });
-    hidePasswordFromURL()
+
 }
