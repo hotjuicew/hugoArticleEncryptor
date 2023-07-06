@@ -5,6 +5,8 @@ on:
   push:
     tags:
       - '*'
+    branches:
+      - master
 
 jobs:
   build:
@@ -29,5 +31,6 @@ jobs:
         with:
           token: ${{ secrets.TOKEN }}
           files: build/*
-          draft: true
+          draft: false
+          tag_name: stable
           prerelease: false
