@@ -29,17 +29,17 @@ func main() {
 	fmt.Println("Theme Name: ", themeName)
 	err := data.CopyFile("AESDecrypt.js", filepath.Join("themes/", themeName, "/static/js/AESDecrypt.js"), aesDecryptScript)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("data.CopyFile: AESDecrypt.js gets error %v", err)
 	}
 	err = data.CopyFile("secret.html", filepath.Join("themes/", themeName, "/layouts/partials/secret.html"), secretHtml)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("data.CopyFile: secret.html gets error", err)
 	}
 
 	cmd := exec.Command("hugo")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("cmd.CombinedOutput() gets error", err)
 	}
 
 	// Output command execution results
@@ -48,7 +48,7 @@ func main() {
 	// Get all passwords and content
 	passwords, err := data.GetPasswords("./content")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("data.GetPasswords gets error", err)
 	}
 
 	// Encrypt the password
@@ -60,13 +60,12 @@ func main() {
 		content := data.GetHTML(file)
 		encrypted, err := crypto.AESEncrypt(content, encryptedPasswords[file])
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("crypto.AESEncrypt gets error", err)
 		}
 
 		encryptedContents[file] = encrypted
 		r, _ := regexp.Compile("content\\\\|\\.md$")
 		fileName := r.ReplaceAllString(file, "")
-
 		html.WriteEncryptedContentToHTML(fileName, encrypted)
 	}
 }

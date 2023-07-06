@@ -114,32 +114,31 @@ func GetHTML(contentDir string) string {
 		// htmlDir1 does not exist, use htmlDir2
 		htmlDir1 = htmlDir2
 	} else {
-		log.Println(err)
+		log.Println("htmlDir gets error", err)
 		return ""
 	}
 
-	log.Println(htmlDir1)
 	file, err := os.ReadFile(htmlDir1)
 	if err != nil {
-		log.Println(err)
+		log.Println("os.ReadFile(htmlDir1) gets error", err)
 		return ""
 	}
 
 	content, err := GetContent(string(file))
 	if err != nil {
-		log.Println(err)
+		log.Println("GetContent(string(file)) gets error",err)
 		return ""
 	}
 
 	updatedHTML, err := UpdateHTML(string(file))
 	if err != nil {
-		log.Println(err)
+		log.Println("UpdateHTML(string(file)) gets error",err)
 		return ""
 	}
 
 	err = os.WriteFile(htmlDir1, []byte(updatedHTML), 0644)
 	if err != nil {
-		log.Println(err)
+		log.Println("os.WriteFile(htmlDir1, []byte(updatedHTML), 0644) gets error",err)
 	}
 
 	return content

@@ -14,6 +14,7 @@ import (
 func WriteEncryptedContentToHTML(folderName string, encryptedText string) {
 	folderPath := filepath.Join("public", folderName)
 
+	fmt.Println("folderPath:", folderPath)
 	// Iterate through the HTML files in the folder
 	err := filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -65,6 +66,6 @@ func WriteEncryptedContentToHTML(folderName string, encryptedText string) {
 	})
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) gets error",err)
 	}
 }
