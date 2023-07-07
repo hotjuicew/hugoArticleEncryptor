@@ -3,15 +3,13 @@ package main
 import (
 	"embed"
 	"fmt"
+	"github.com/hotjuicew/hugoArticleEncryptor/crypto"
+	"github.com/hotjuicew/hugoArticleEncryptor/data"
+	"github.com/hotjuicew/hugoArticleEncryptor/html"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
-
-	"github.com/hotjuicew/hugoArticleEncryptor/crypto"
-	"github.com/hotjuicew/hugoArticleEncryptor/data"
-	"github.com/hotjuicew/hugoArticleEncryptor/html"
 )
 
 //go:embed AESDecrypt.js
@@ -62,10 +60,10 @@ func main() {
 		if err != nil {
 			log.Fatal("crypto.AESEncrypt gets error", err)
 		}
-
 		encryptedContents[file] = encrypted
-		r, _ := regexp.Compile("content\\\\|\\.md$")
-		fileName := r.ReplaceAllString(file, "")
-		html.WriteEncryptedContentToHTML(fileName, encrypted)
+		filename := filepath.Base(file)
+		extension := filepath.Ext(filename)
+		name := filename[:len(filename)-len(extension)]
+		html.WriteEncryptedContentToHTML(filepath.Base(name), encrypted)
 	}
 }

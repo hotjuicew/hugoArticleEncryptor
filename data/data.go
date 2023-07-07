@@ -74,11 +74,10 @@ func GetPasswords(contentDir string) (map[string]string, error) {
 		if filepath.Ext(path) != ".md" {
 			return nil
 		}
-
 		metadata, err := getMetadata(path)
 		fmt.Println(path)
 		if err != nil {
-			return err
+			log.Println("getMetadata(path) gets err", err)
 		}
 
 		password, ok := metadata["password"].(string)
@@ -126,19 +125,19 @@ func GetHTML(contentDir string) string {
 
 	content, err := GetContent(string(file))
 	if err != nil {
-		log.Println("GetContent(string(file)) gets error",err)
+		log.Println("GetContent(string(file)) gets error", err)
 		return ""
 	}
 
 	updatedHTML, err := UpdateHTML(string(file))
 	if err != nil {
-		log.Println("UpdateHTML(string(file)) gets error",err)
+		log.Println("UpdateHTML(string(file)) gets error", err)
 		return ""
 	}
 
 	err = os.WriteFile(htmlDir1, []byte(updatedHTML), 0644)
 	if err != nil {
-		log.Println("os.WriteFile(htmlDir1, []byte(updatedHTML), 0644) gets error",err)
+		log.Println("os.WriteFile(htmlDir1, []byte(updatedHTML), 0644) gets error", err)
 	}
 
 	return content

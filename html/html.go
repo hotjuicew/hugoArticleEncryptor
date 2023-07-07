@@ -6,15 +6,28 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"unicode"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
-// WriteEncryptedContentToHTML Write the encrypted content to an html file
-func WriteEncryptedContentToHTML(folderName string, encryptedText string) {
-	folderPath := filepath.Join("public", folderName)
+func convertToLower(str string) string {
+	var result strings.Builder
 
-	fmt.Println("folderPath:", folderPath)
+	for _, char := range str {
+		if unicode.IsUpper(char) && unicode.IsLetter(char) {
+			char = unicode.ToLower(char)
+		}
+		result.WriteRune(char)
+	}
+
+	return result.String()
+}
+
+// WriteEncryptedContentToHTML Write the encrypted content to a html file
+func WriteEncryptedContentToHTML(folderName string, encryptedText string) {
+	folderNameLower := convertToLower(folderName)
+	folderPath := filepath.Join("public", "post", folderNameLower)
 	// Iterate through the HTML files in the folder
 	err := filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -66,6 +79,6 @@ func WriteEncryptedContentToHTML(folderName string, encryptedText string) {
 	})
 
 	if err != nil {
-		log.Fatal("filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) gets error",err)
+		log.Fatal("filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) gets error", err)
 	}
 }
