@@ -3,13 +3,14 @@ package main
 import (
 	"embed"
 	"fmt"
+	"log"
+	"os/exec"
+	"path/filepath"
+
+	"github.com/hotjuicew/hugoArticleEncryptor/config"
 	"github.com/hotjuicew/hugoArticleEncryptor/crypto"
 	"github.com/hotjuicew/hugoArticleEncryptor/data"
 	"github.com/hotjuicew/hugoArticleEncryptor/html"
-	"log"
-	"os"
-	"os/exec"
-	"path/filepath"
 )
 
 //go:embed AESDecrypt.js
@@ -19,13 +20,15 @@ var aesDecryptScript embed.FS
 var secretHtml embed.FS
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("Please provide the theme name as a parameter.〒▽〒")
+	//get themeName
+	themeName, err := config.GetThemeFromConfig()
+	if err != nil {
+		fmt.Println("GetThemeFromConfig gets err", err)
 		return
 	}
-	themeName := os.Args[1]
-	fmt.Println("Theme Name: ", themeName)
-	err := data.CopyFile("AESDecrypt.js", filepath.Join("themes/", themeName, "/static/js/AESDecrypt.js"), aesDecryptScript)
+	//在single.html中插入代码
+	config.ChangeSingleHTML(themeName)
+	err = data.CopyFile("AESDecrypt.js", filepath.Join("themes/", themeName, "/static/js/AESDecrypt.js"), aesDecryptScript)
 	if err != nil {
 		log.Fatalf("data.CopyFile: AESDecrypt.js gets error %v", err)
 	}
