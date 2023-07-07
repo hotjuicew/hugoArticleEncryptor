@@ -37,10 +37,9 @@ func main() {
 		log.Fatal("data.CopyFile: secret.html gets error", err)
 	}
 
-	cmd := exec.Command("hugo")
-	output, err := cmd.CombinedOutput()
+	output, err := exec.Command("hugo").Output()
 	if err != nil {
-		log.Fatal("cmd.CombinedOutput() gets error", err)
+		log.Fatalln("cmd.Output() gets error", err)
 	}
 
 	// Output command execution results
@@ -49,7 +48,7 @@ func main() {
 	// Get all passwords and content
 	passwords, err := data.GetPasswords("./content")
 	if err != nil {
-		log.Fatal("data.GetPasswords gets error", err)
+		log.Fatalln("data.GetPasswords gets error", err)
 	}
 
 	// Encrypt the password
