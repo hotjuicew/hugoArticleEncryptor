@@ -31,7 +31,7 @@ func GetThemeFromConfig() (string, error) {
 			return "", fmt.Errorf("failed to parse TOML configuration file：%v", err)
 		}
 		return theme, nil
-	case ".yaml":
+	case ".yml":
 		theme, err := getThemeFromYaml(fileData)
 		if err != nil {
 			return "", fmt.Errorf("failed to parse YAML configuration file：%v", err)
@@ -48,9 +48,9 @@ func findConfigFile() string {
 		return "config.toml"
 	}
 
-	_, err = os.Stat("config.yaml")
+	_, err = os.Stat("config.yml")
 	if err == nil {
-		return "config.yaml"
+		return "config.yml"
 	}
 
 	return ""
