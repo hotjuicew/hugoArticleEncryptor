@@ -31,14 +31,14 @@ func GetThemeFromConfig() (string, error) {
 			return "", fmt.Errorf("failed to parse TOML configuration file：%v", err)
 		}
 		return theme, nil
-	case ".yml":
+	case ".yml", ".yaml":
 		theme, err := getThemeFromYaml(fileData)
 		if err != nil {
 			return "", fmt.Errorf("failed to parse YAML configuration file：%v", err)
 		}
 		return theme, nil
 	default:
-		return "", fmt.Errorf("不支持的配置文件格式：%s", ext)
+		return "", fmt.Errorf("unsupported configuration file format：%s", ext)
 	}
 }
 
@@ -52,7 +52,10 @@ func findConfigFile() string {
 	if err == nil {
 		return "config.yml"
 	}
-
+	_, err = os.Stat("config.yaml")
+	if err == nil {
+		return "config.yaml"
+	}
 	return ""
 }
 
