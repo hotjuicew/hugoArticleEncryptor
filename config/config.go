@@ -97,6 +97,11 @@ func ChangeSingleHTML(themeName string) {
 		log.Fatal("Fail to read single html")
 	}
 	contentStr := string(content)
+	// Check if "secret.html" already exists in contentStr
+	if strings.Contains(contentStr, "secret.html") {
+		return
+	}
+
 	// Find the first "<div"
 	divIndex := strings.Index(contentStr, "<div")
 	if divIndex == -1 {
