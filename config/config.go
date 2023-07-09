@@ -132,3 +132,15 @@ func fileExists(filename string) bool {
 	}
 	return true
 }
+func GetThemesFolderName() (string, error) {
+	files, err := os.ReadDir("themes")
+	if err != nil {
+		return "", fmt.Errorf("failed to read themes directory: %v", err)
+	}
+
+	if len(files) != 1 || !files[0].IsDir() {
+		return "", fmt.Errorf("themes directory should contain exactly one folder")
+	}
+
+	return files[0].Name(), nil
+}

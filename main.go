@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"path/filepath"
 
@@ -26,8 +27,19 @@ func main() {
 		fmt.Println("GetThemeFromConfig gets err", err)
 		return
 	}
+	if themeName == "" {
+		themeName, _ = config.GetThemesFolderName()
+	}
 	//在single.html中插入代码
 	config.ChangeSingleHTML(themeName)
+	if _, err := os.Stat(filepath.Join("themes", themeName, "static", "js")); os.IsNotExist(err) {
+		// 路径不存在，创建路径
+		err := os.MkdirAll(filepath.Join("themes", themeName, "static", "js"), os.ModePerm)
+		if err != nil {
+			log.Fatalf("Unable to create path：%v\n\n", err)
+			return
+		}
+	}
 	err = data.CopyFile("AESDecrypt.js", filepath.Join("themes/", themeName, "/static/js/AESDecrypt.js"), aesDecryptScript)
 	if err != nil {
 		log.Fatalf("data.CopyFile: AESDecrypt.js gets error %v", err)
