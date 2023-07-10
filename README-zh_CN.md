@@ -2,8 +2,11 @@
 [English](https://github.com/hotjuicew/hugoArticleEncryptor/blob/master/README.md) | 简体中文
 
 hugoArticleEncryptor是一个hugo文章加密工具，使用AES-GCM算法对整个hugo文章进行加密，将javascript代码插入到加密的文章中，在用户输入正确的口令之后解密内容。
-配置非常简单。并且当你输入过一次正确密码后，下次访问加密页面就不需重复输入密码，会直接呈现解密后的内容
+配置非常简单。并且当你输入过一次正确密码后，下次访问加密页面就不需重复输入密码，会直接呈现解密后的内容。
+
+hugoArticleEncryptor会对你content文件夹下的posts（或post）文件夹中的文章进行遍历，如果文章的元信息中存在protected和password字段，便会对这篇文章进行加密。
 ## [DEMO](https://juicebar-demo.add1.dev/)
+这篇文章的密码是password
 ## 安装与使用
 ### Option A: 使用二进制文件（推荐）
 #### 本地运行

@@ -4,7 +4,10 @@ English | [简体中文](https://github.com/hotjuicew/hugoArticleEncryptor/blob/
 hugoArticleEncryptor is a tool for encrypting Hugo articles. It uses the AES-GCM algorithm to encrypt the entire Hugo article and inserts JavaScript code into the encrypted article. The content can be decrypted by entering the correct passphrase.
 
 The configuration is very simple. Once you enter the correct password, you don't need to re-enter it when accessing the encrypted page again. The decrypted content will be directly displayed.
+
+hugoArticleEncryptor traverses the articles in the posts (or post) folder under your content folder and encrypts the article if the protected and password fields are present in the article's meta information.
 ## [DEMO](https://juicebar-demo.add1.dev/)
+(The password for this post is password)
 ## Installation and Usage
 ### Option A: Using Binary File (Recommended)
 #### Local Execution
