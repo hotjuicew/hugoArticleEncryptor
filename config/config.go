@@ -105,14 +105,14 @@ func ChangeSingleHTML(themeName string) {
 		return
 	}
 
-	// Find the first "<div"
-	divIndex := strings.Index(contentStr, "<div")
-	if divIndex == -1 {
-		log.Fatal("can't find '<div'")
+	// Find the first ">"
+	closeBracketIndex := strings.Index(contentStr, ">")
+	if closeBracketIndex == -1 {
+		log.Fatal("can't find '>'")
 	}
 
-	// After the first "<div" insert "id="encrypted""
-	updatedHTML := contentStr[:divIndex+5] + ` id="encrypted"` + contentStr[divIndex+5:]
+	// Before the first ">", insert "id="encrypted""
+	updatedHTML := contentStr[:closeBracketIndex] + ` id="encrypted"` + contentStr[closeBracketIndex:]
 
 	// Find the first ">"
 	endDivIndex := strings.Index(updatedHTML, ">")

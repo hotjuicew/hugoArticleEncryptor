@@ -49,6 +49,7 @@ function hexToBytes(hexString) {
 
     return bytes;
 }
+console.log("js load");
 let title = document.title
 if (localStorage.getItem(title)!== null) {
     decryption(localStorage.getItem(title))
