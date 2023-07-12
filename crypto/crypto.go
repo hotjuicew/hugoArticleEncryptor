@@ -7,14 +7,11 @@ import (
 	"encoding/hex"
 )
 
-func GetEncryptedPasswords(passwords map[string]string) map[string][]byte {
-	encryptedPasswords := make(map[string][]byte)
-	for file, password := range passwords {
-		hash := sha256.New()
-		hash.Write([]byte(password))
-		encryptedPasswords[file] = hash.Sum(nil)
-	}
-	return encryptedPasswords
+func GetEncryptedPassword(password string) []byte {
+	hash := sha256.New()
+	hash.Write([]byte(password))
+	encryptedPassword := hash.Sum(nil)
+	return encryptedPassword
 }
 
 // AESEncrypt Encrypt plaintext using AES-GCM algorithm
