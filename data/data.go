@@ -2,7 +2,6 @@ package data
 
 import (
 	"embed"
-	"fmt"
 	"github.com/hotjuicew/hugoArticleEncryptor/crypto"
 	"io"
 	"log"
@@ -78,7 +77,7 @@ func getData(path string) {
 
 	doc.Find("body").AppendHtml(`<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>`)
 	doc.Find("body").AppendHtml(`<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>`)
-	doc.Find("body").AppendHtml(`<script src="../../js/AESDecrypt.js"></script>`)
+	doc.Find("body").AppendHtml(`<script src="/js/AESDecrypt.js"></script>`)
 	secretElements := doc.Find("div#secret")
 	if secretElements.Length() == 0 {
 		return
@@ -90,7 +89,6 @@ func getData(path string) {
 	secretElements.RemoveAttr("password")
 	encryptedPassword := crypto.GetEncryptedPassword(passwordAttr)
 	encryptedContent, err := crypto.AESEncrypt(innerText, encryptedPassword)
-	fmt.Println("encryptedContent", encryptedContent)
 	if err != nil {
 		log.Fatal("crypto.AESEncrypt(innerText, encryptedPassword) gets err", err)
 	}

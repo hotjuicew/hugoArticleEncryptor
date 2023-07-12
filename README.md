@@ -1,11 +1,11 @@
 # hugoArticleEncryptor
 English | [简体中文](https://github.com/hotjuicew/hugoArticleEncryptor/blob/master/README-zh_CN.md)
 
-hugoArticleEncryptor is a tool for encrypting Hugo articles. It uses the AES-GCM algorithm to encrypt the entire Hugo article and inserts JavaScript code into the encrypted article. The content can be decrypted by entering the correct passphrase.
+hugoArticleEncryptor is a tool for encrypting Hugo articles. It is a Golang version of ⭐[Hugo Encryptor](https://github.com/Li4n0/hugo_encryptor).
+It uses the AES-GCM algorithm to encrypt the entire Hugo article, and decrypts the content after the user enters the correct password.
+The configuration is very simple. Once you have entered the correct password, you won't need to enter it again when accessing encrypted pages. The decrypted content will be directly displayed.
 
-The configuration is very simple. Once you enter the correct password, you don't need to re-enter it when accessing the encrypted page again. The decrypted content will be directly displayed.
-
-hugoArticleEncryptor traverses the articles in the posts (or post) folder under your content folder and encrypts the article if the protected and password fields are present in the article's meta information.
+hugoArticleEncryptor only works on the "posts" folder (or "post" folder) under your "content" directory.
 ## [DEMO](https://juicebar-demo.add1.dev/)
 (The password for this post is password)
 ## Installation and Usage
@@ -13,18 +13,22 @@ hugoArticleEncryptor traverses the articles in the posts (or post) folder under 
 #### Local Execution
 1.Download: Download  [hugoArticleEncryptor](https://github.com/hotjuicew/hugoArticleEncryptor/releases/latest) to your blog project folder.，
 
-
-2.Add encryption markers: Add two key-value pairs to the metadata of the article you want to encrypt: `protected: true` and `password: "your_password"`. For example:
+2.In your article, you can use encryption tags as follows: enclose the content you want to encrypt with {{< secret "password" >}} and {{< /secret >}}. The {{< secret "password" >}} tag should be preceded by <!--more-->.
 
 example:
-```yaml
+```markdown
 ---
-title: "Secret Post"
-date: 2023-02-20T01:02:08+08:00
-categories: ["Guide"]
-protected: true
-password: 'password'
+title: "example"
+date: 2023-07-11T01:53:48+08:00
 ---
+<!--more-->
+{{< secret "password" >}}
+## hi
+### hugoArticleEncryptor is a hugo article encryption tool!
+Let's try it.
+> hugoArticleEncryptor was inspired by the hugo_encryptor project
+
+{{< /secret >}}
 ```
 4.Run the command: Navigate to your blog project and run the binary file you downloaded.
 ```bash

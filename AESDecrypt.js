@@ -66,22 +66,13 @@ function checkPassword() {
     decryption(password)
 }
 function decryption(password) {
-    // 获取 ciphertext 属性的值
     let secretElement = document.getElementById('secret');
     let ciphertext = secretElement.innerText;
-
     AESDecrypt(ciphertext, password).then(plaintext => {
         document.getElementById("verification").style.display = "none";
-        // 将 ciphertext 的值放入 verification后面 中
-        // 查找id为verification的元素
         let verificationElement = document.getElementById('verification');
-
-        console.log("plaintext:",plaintext)
-
         let htmlText =  marked.parse(plaintext);
-        // 在id为verification的元素后面插入HTML代码
         verificationElement.insertAdjacentHTML('afterend', htmlText);
-        //将密码储存至localStorage
         if (localStorage.getItem(title) !==password)localStorage.setItem(title, password);
     }).catch(error => {
         alert("Incorrect password. Please try again.");

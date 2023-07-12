@@ -1,10 +1,11 @@
 # hugoArticleEncryptor
 [English](https://github.com/hotjuicew/hugoArticleEncryptor/blob/master/README.md) | 简体中文
 
-hugoArticleEncryptor是一个hugo文章加密工具，使用AES-GCM算法对整个hugo文章进行加密，将javascript代码插入到加密的文章中，在用户输入正确的口令之后解密内容。
+hugoArticleEncryptor是一个hugo文章加密工具。是 ⭐[Hugo Encryptor](https://github.com/Li4n0/hugo_encryptor)的go版本。
+使用AES-GCM算法对整个hugo文章进行加密，在用户输入正确的口令之后解密内容。
 配置非常简单。并且当你输入过一次正确密码后，下次访问加密页面就不需重复输入密码，会直接呈现解密后的内容。
 
-hugoArticleEncryptor会对你content文件夹下的posts（或post）文件夹中的文章进行遍历，如果文章的元信息中存在protected和password字段，便会对这篇文章进行加密。
+hugoArticleEncryptor只对你content文件夹下的posts（或post）文件夹起效果
 ## [DEMO](https://juicebar-demo.add1.dev/)
 这篇文章的密码是password
 ## 安装与使用
@@ -12,18 +13,23 @@ hugoArticleEncryptor会对你content文件夹下的posts（或post）文件夹�
 #### 本地运行
 1.下载：下载 [hugoArticleEncryptor](https://github.com/hotjuicew/hugoArticleEncryptor/releases/latest) 到你的博客项目文件夹，
 
-2.做加密标记：在你想要加密的文章的元信息中加入两个键值对
-`protected: true`和 `password: 'your_password'`
+2.在你的文章中做加密标记:用{{< secret "password" >}}和{{< /secret >}}包裹住你要加密的帖子。{{< secret "password" >}}前面需要有<!--more-->
 例如：
-```yaml
+```markdown
 ---
-title: "Secret Post"
-date: 2023-02-20T01:02:08+08:00
-categories: ["Guide"]
-protected: true
-password: 'password'
+title: "example"
+date: 2023-07-11T01:53:48+08:00
 ---
+<!--more-->
+{{< secret "password" >}}
+## hi
+### hugoArticleEncryptor is a hugo article encryption tool!
+Let's try it.
+> hugoArticleEncryptor was inspired by the hugo_encryptor project
+
+{{< /secret >}}
 ```
+
 3.运行命令：进入你的博客项目，运行你之前下载的二进制文件
 ```bash
 $ .\hugoArticleEncryptor-windows-amd64.exe 
@@ -35,6 +41,7 @@ $ python3 -m http.server -b 0.0.0.0 -d public 1313
 #### Vercel、Netlify 等平台配置
 1.将[build.sh](https://github.com/hotjuicew/hugoArticleEncryptor/blob/master/exampleSite/build.sh)复制到你的博客项目文件夹下
 2.Build command: `sh build.sh`
+
 ### Option B: 使用源码构建
 1.进入博客所在目录，克隆本项目
 ```bash

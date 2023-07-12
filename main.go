@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/hotjuicew/hugoArticleEncryptor/config"
 	"github.com/hotjuicew/hugoArticleEncryptor/data"
 )
 
@@ -19,22 +18,20 @@ var aesDecryptScript embed.FS
 var secretHtml embed.FS
 
 func main() {
-	//get themeName
-	themeName, err := config.GetThemeFromConfig()
+
+	dir1 := "static/js"
+	err := os.MkdirAll(dir1, os.ModePerm)
 	if err != nil {
-		fmt.Println("GetThemeFromConfig gets err", err)
+		log.Println(" ", err)
 		return
 	}
-	if themeName == "" {
-		themeName, _ = config.GetThemesFolderName()
-	}
-	dir := "layouts/shortcodes"
-	err = os.MkdirAll(dir, os.ModePerm)
+	dir2 := "layouts/shortcodes"
+	err = os.MkdirAll(dir2, os.ModePerm)
 	if err != nil {
 		log.Println(" \"layouts/shortcodes\" create fail:", err)
 		return
 	}
-	err = data.CopyFile("AESDecrypt.js", filepath.Join("themes/", themeName, "/static/js/AESDecrypt.js"), aesDecryptScript)
+	err = data.CopyFile("AESDecrypt.js", filepath.Join("static/js/AESDecrypt.js"), aesDecryptScript)
 	if err != nil {
 		log.Fatalf("data.CopyFile: AESDecrypt.js gets error %v", err)
 	}
