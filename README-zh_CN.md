@@ -9,7 +9,11 @@ hugoArticleEncryptor只对你content文件夹下的posts（或post）文件夹�
 ## [DEMO](https://juicebar-demo.add1.dev/)
 这篇文章的密码是password
 ## 安装与使用
-### Option A: 使用二进制文件（推荐）
+### Option A: 使用自动发布的二进制文件
+
+请注意，发布页面提供的二进制文件是通过GitHub Actions根据公开的源代码自动生成的。这些二进制文件提供了方便和简便的使用方式，特别适用于在Vercel或Netlify等平台上部署。
+
+如果你愿意，你也可以直接从源代码构建并使用该工具。有关从源代码构建的说明，请参阅本README中的相应部分。
 #### 本地运行
 1.下载：下载 [hugoArticleEncryptor](https://github.com/hotjuicew/hugoArticleEncryptor/releases/latest) 到你的博客项目文件夹，
 
@@ -57,3 +61,8 @@ $ .\hugoArticleEncryptor.exe
 ```bash
 $ python3 -m http.server -b 0.0.0.0 -d public 1313
 ```
+
+## 注意
+⚠️ 重要安全提示：保护您的博客代码 ⚠️
+
+为了确保您博客内容的安全性和隐私性，我们强烈建议将您的博客代码保存在**私人存储库**中。
